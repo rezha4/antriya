@@ -20,7 +20,7 @@ import { Wrapper } from "@/components/shared/Wrapper";
 import Navbar from "@/components/shared/Navbar";
 import { db } from "@vercel/postgres";
 import { useState } from "react";
-import { signup } from "../lib/actions";
+import { login, signup } from "../lib/actions";
 
 const FormSchema = z.object({
   username: z
@@ -49,7 +49,12 @@ export default function InputForm() {
   });
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
-    await signup(data);
+    if (isSignup) {
+      console.log("signing up")
+      signup(data);
+      return;
+    }
+    login(data);
   }
 
   return (
