@@ -13,9 +13,6 @@ const Navbar = () => {
         <Link href="/login">
           <Button variant="link">Masuk</Button>
         </Link>
-        <Link href="/login">
-          <Button variant="link">Daftar</Button>
-        </Link>
       </div>
     </nav>
   );

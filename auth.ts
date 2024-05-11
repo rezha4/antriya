@@ -2,7 +2,7 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { authConfig } from "./auth.config";
 import { z } from "zod";
-import "@vercel/postgres"
+import { sql } from "@vercel/postgres";
 import bcrypt from "bcrypt";
 
 type User = {
@@ -23,7 +23,7 @@ async function getUser(email: string): Promise<User | undefined> {
   }
 }
 
-export const { auth, signIn, signOut } = NextAuth({
+export const { auth, signIn, signOut, handlers } = NextAuth({
   ...authConfig,
   providers: [
     Credentials({
@@ -39,8 +39,15 @@ export const { auth, signIn, signOut } = NextAuth({
           const { email, password } = parsedCredentials.data;
           const user = await getUser(email);
           if (!user) return null;
+          const passwordsMatch = await bcrypt.compare(
+            password,
+            user.password
+          );
+
+          if (passwordsMatch) return user;
         }
 
+        console.log("Invalid credentials");
         return null;
       },
     }),
